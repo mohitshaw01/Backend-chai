@@ -84,3 +84,6 @@ asyncHandler is a function that takes an asynchronous route handler function (fn
 jwt is a bearer token (like a key)
 
 The generateAccessToken method in a user schema creates a JWT with the user's ID as the payload, signed using a secret key and an expiration time defined by environment variables. This token can be utilized for secure user authentication and authorization in the application.
+
+
+// upload images/videos on cloudinary
