@@ -47,47 +47,30 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-// writing middlewares
+// pre is a middleware that runs before a certain event
 userSchema.pre("save", async function (next) {
-  // password modified nhi hua hai toh agla middleware ko call kardo
-  if (!this.isModified(this.password)) {
-    return next;
+  // if the password is not modified, skip this middleware
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
   }
-  //
-  this.password = bcrypt.hash(this.password, 10);
   next();
 });
-//
-userSchema.methods.isPasswordCorrect = async function (password) {
+
+userSchema.method.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-//
-userSchema.methods.generateAccessToken = function () {
-  return jwt.sign(
-    {
-      fullname: this.fullname,
-      emial: this.email,
-      id: this.id,
-      username: this.username,
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    },
-  );
+userSchema.method.generateAccessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+  });
 };
-//
+
 userSchema.method.generateRefreshToken = function () {
-  jwt.sign(
-    {
-      id: this.id,
-    },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    },
-  );
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+  });
 };
+
 
 export const User = new mongoose.model("User", userSchema);
