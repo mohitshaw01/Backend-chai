@@ -24,6 +24,12 @@ import userRoutes from './routes/user.routes.js'
 // we use express.Router() in routes and then use app.use to use that router
 // this is a good practice to keep the code clean and maintainable
 // app.use('/api/v1/user', userRoutes) means that all the routes in userRoutes will be prefixed with /api/v1/user
-app.use('/api/v1/user', userRoutes)
+
+// app.get('/api/v1/user', (req, res) => {
+//     res.send('Hello from user')
+// })
+
+app.use('/api/v1/user', userRoutes);
+
 
 export default app;
