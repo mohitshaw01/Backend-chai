@@ -1,7 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
-import uploadOnCloudinary from "../utils/cloudinary.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 // if we do not use asyncHadler, we will have to use try catch block in every controller function
 
@@ -18,7 +18,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
-    const user = user.findById(userId);
+    const user = await User.findById(userId);
+    if(!user){
+      throw new ApiError(404, "User not found");
+    }
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
     // explain the below line
@@ -41,7 +44,6 @@ const registeredUser = asyncHandler(async (req, res) => {
   //6. remove password from the user object before sending it to the client
   console.log(req.body);
   const { fullname, email, username, password } = req.body;
-  console.log(fullname);
   // if the data is not present in the request body, we will throw an error
   if (!fullname || !email || !username || !password) {
     throw new ApiError(400, "All fields are required");
@@ -63,28 +65,30 @@ const registeredUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists");
   }
   // checking for files using ternary
-  console.log(req.files);
-  const avatarLocalPath = req.files ? req.files.avatar : null;
-  const coverimageLocalPath = req.files ? req.files.coverimage : null;
+  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const coverimageLocalPath = req.files?.coverimage[0]?.path;
   if (!avatarLocalPath || !coverimageLocalPath) {
     throw new ApiError(400, "Avatar and cover image are required");
   }
   // uploading images to cloudinary
+  // console.log(avatarLocalPath);
   const avatar_upload = await uploadOnCloudinary(avatarLocalPath);
   const coverimage_upload = await uploadOnCloudinary(coverimageLocalPath);
   //
-  const newUser = await new User({
+  // console.log(avatar_upload);
+  // console.log(coverimage_upload);
+  //
+  const newUser = await User.create({
     fullname,
     email,
     username,
     password,
-    avatar: avatar_upload.url,
-    coverimage: coverimage_upload.url,
+    avatar: avatar_upload.url || " ",
+    coverimage: coverimage_upload?.url || " ",
   });
-  // finding user by id and not seelectiong password and refreshToken
-  const usercreated = await User.finbyId(newUser._id).select(
-    "-password",
-    "-refreshToken",
+  // finding user by id and not selecting password and refreshToken
+  const usercreated = await User.findById(newUser._id).select(
+    "-password -refreshToken",
   );
   if (!usercreated) {
     throw new ApiError(500, "User not created");
@@ -117,14 +121,11 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid password");
   }
   // create a token and send it to the client
-  const { accessToken, refreshToken } = user.generateAccessAndRefreshToke(
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     user._id,
   );
 
-  const loggedInUser = await User.findById(user._id).select(
-    "-password",
-    "-refreshToken",
-  );
+  const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
   const options = {
     httpOnly: true,
@@ -172,7 +173,6 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken", options);
   res.status(200).json(new ApiResponse(200, "User logged out successfully"));
 });
-
 
 
 export { registeredUser, loginUser, logoutUser };

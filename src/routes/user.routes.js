@@ -20,9 +20,9 @@ router.route("/register")
 ]),registeredUser)
 console.log('User routes initialized')
 
-router.route('/login',loginUser)
+router.route('/login').post(loginUser);
 // middlewares routes
-router.route('/logout',verifyJWT, logoutUser)
+router.route('/logout').get(verifyJWT, logoutUser);
 
 
 export default router;

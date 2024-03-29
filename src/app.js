@@ -14,7 +14,7 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 // Routes Import
-// import userRoutes from './routes/user.routes.js'
+import userRoutes from './routes/user.routes.js'
 // import videoRoutes from './routes/video.routes.js'
 // import tweetRoutes from './routes/tweet.routes.js'
 // import commentRoutes from './routes/comment.routes.js'
@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
     res.send('Hello from user')
 })
 
-// app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/users', userRoutes);
 // app.use('api/v1/video', videoRoutes);
 // app.use('api/v1/tweet', tweetRoutes);
 // app.use('api/v1/comment', commentRoutes);

@@ -25,7 +25,6 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String, // cloudnary url
-      required: true,
     },
     coverimage: {
       type: String,
@@ -50,15 +49,17 @@ const userSchema = new Schema(
 // pre is a middleware that runs before a certain event
 userSchema.pre("save", async function (next) {
   // if the password is not modified, skip this middleware
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+  if (!this.isModified("password")) {
+    return next();
   }
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-userSchema.method.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
+
 
 userSchema.methods.generateAccessToken = function(){
   return jwt.sign(
