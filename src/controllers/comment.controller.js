@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import Comment from "../models/comment.model.js";
-import { Video } from "../models/video.model.js";
-import { asyncHandler } from "../middlewares/asyncHandler.js";
+import {Comment} from "../models/comment.model.js";
+import { Video } from "../models/video.models.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from '../models/user.models.js';
 
+// see this again for moongoose aggreagatio pipeline and how to use it
 const getVideoComments = asyncHandler(async (req, res, next) => {
   // steps
   // get video id from request

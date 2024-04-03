@@ -1,5 +1,5 @@
 import { ApiError } from "../utils/ApiError";
-import asyncHandler from "../utils/asyncHandler";
+import {asyncHandler} from "../utils/asyncHandler";
 
 const healthcheck = asyncHandler(async (req, res) => {
    try {
