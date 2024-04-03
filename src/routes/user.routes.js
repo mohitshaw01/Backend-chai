@@ -8,7 +8,6 @@ const router = Router();
 // before going to register we are uploading the images and then we are registering user
 // we are using upload.fields middleware to upload multiple images
 // name is the name of the field in the form and maxCount is the maximum number of files that can be uploaded
-console.log('User routes not initialized');
 router.route("/register")
 .post(upload.fields([
     {
@@ -17,8 +16,7 @@ router.route("/register")
     {
         name: 'coverimage', maxCount: 1
     }
-]),registeredUser)
-console.log('User routes initialized')
+]),registeredUser);
 
 router.route('/login').post(loginUser);
 // middlewares routes

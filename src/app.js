@@ -15,7 +15,7 @@ app.use(cookieParser())
 
 // Routes Import
 import userRoutes from './routes/user.routes.js'
-// import videoRoutes from './routes/video.routes.js'
+import videoRoutes from './routes/video.routes.js'
 // import tweetRoutes from './routes/tweet.routes.js'
 // import commentRoutes from './routes/comment.routes.js'
 // import likeRoutes from './routes/like.routes.js'
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/v1/users', userRoutes);
-// app.use('api/v1/video', videoRoutes);
+app.use('/api/v1/video', videoRoutes);
 // app.use('api/v1/tweet', tweetRoutes);
 // app.use('api/v1/comment', commentRoutes);
 // app.use('api/v1/like', likeRoutes);
