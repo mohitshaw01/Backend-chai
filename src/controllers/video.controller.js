@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import {v2 as cloudinary} from 'cloudinary';
 
 const publishAVideo = asyncHandler(async (req,res) => {
     // steps to publish a video
@@ -66,7 +67,60 @@ const publishAVideo = asyncHandler(async (req,res) => {
 });
 
 const getVideoById = asyncHandler(async (req,res) => {
+    try {
+        const {videoId} = req.params;
+        if(!videoId){
+            console.log("videoId not found");
+        }
+        const video = await Video.findById(videoId);
+        if(!video){
+            console.log("video not found");
+        }
+        return res.status(200).json(
+            new ApiResponse(200,video,"Video found successfully")
+        );
+    } catch (error) {
+        throw new ApiError(500,"Internal Server Error " + error.message || " ");
+    }
 
 })
+// It will use moongose aggregate paginate
+const getAllVideos = asyncHandler(async (req,res) => {
+    // incomplete
+    res.status(200).json(
+        new ApiResponse(200,"working getAllVideos")
+    );
+})
 
-export {publishAVideo,getVideoById}
+const deleteVideo = asyncHandler(async (req,res) => {
+    // steps to delete videos
+    // 1. get videoId from the request params
+    // 2. find the video by id
+    // 3. delete the video from cloudinary
+    // 4. delete the video from the database (video previously has been unlinked from the database)
+    // 5. send the response
+    const {videoId} = req.params;
+    if(!videoId){
+        throw new ApiError(400,"Please provide videoId in the parameter of the url");
+    }
+    const video = await Video.findById(videoId);
+    if(!video){
+        throw new ApiError(404,"Video not found");
+    }
+    // delete the video from cloudinary
+
+    const response = cloudinary.uploader.destroy(videoId, { resource_type: "video" }, (error, result) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Video deleted successfully");
+        }
+      });
+    console.log(response.then((result) => console.log(result)));
+    if(response.result === "not found"){
+        throw new ApiError(404,"Video not found on cloudinary");
+    }
+    return res.status(200).json(new ApiResponse(200,{},"Video deleted successfully"));
+});
+
+export {publishAVideo,getVideoById,getAllVideos,deleteVideo}

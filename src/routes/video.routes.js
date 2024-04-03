@@ -3,9 +3,9 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 import {
-  // deleteVideo,
-  // getAllVideos,
-  // getVideoById,
+  deleteVideo,
+  getAllVideos,
+  getVideoById,
   publishAVideo,
   // togglePublishStatus,
   // updateVideo,
@@ -23,11 +23,11 @@ router.route("/publish-video").post(
   publishAVideo,
 );
 
-// router.route("/get-all-videos").get(getAllVideos);
-// router.route("/:videoId").get(verifyJWT,getVideoById);
+router.route("/get-all-videos").get(getAllVideos);
+router.route("/:videoId").get(verifyJWT,getVideoById);
 // router.route("/toggle-publish-status/:videoId").put(verifyJWT,togglePublishStatus);
 // router.route("/update-video/:videoId").put(verifyJWT,updateVideo);
-// router.route("/delete-video/:videoId").delete(verifyJWT,deleteVideo);
+router.route("/delete-video/:videoId").delete(verifyJWT,deleteVideo);
 
 
 export default router;
