@@ -1,5 +1,5 @@
-import { ApiError } from "../utils/ApiError";
-import {asyncHandler} from "../utils/asyncHandler";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js"
 
 const healthcheck = asyncHandler(async (req, res) => {
    try {
@@ -7,7 +7,6 @@ const healthcheck = asyncHandler(async (req, res) => {
    } catch (error) {
         throw new ApiError(500, "Internal Server Error");
    }
-
 })
 
 export { healthcheck }
