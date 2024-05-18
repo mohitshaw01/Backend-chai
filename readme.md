@@ -3,7 +3,8 @@ so always use try catcha and async await
 
 // app.use is used for middlewares 
 
-
+- Postman collection
+- https://www.postman.com/red-spaceship-382281/workspace/public/request/19844068-5fea80b9-0420-498e-b86c-387c826d0fd3
 
 // In utils we store those methods which we are going to use regularly
 
